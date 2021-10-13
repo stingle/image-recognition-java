@@ -103,7 +103,7 @@ public class StingleImageRecognition {
      * @return detected objects list
      * @throws IOException when accessing corrupted or TF model file or not finding the model file path
      */
-    public List<Detection> runObjectDetection(Bitmap bitmap) throws IOException {
+    public List<DetectionResult> runObjectDetection(Bitmap bitmap) throws IOException {
         TensorImage image = TensorImage.fromBitmap(bitmap);
 
         if (detector == null) {
@@ -111,8 +111,41 @@ public class StingleImageRecognition {
         }
 
         List<Detection> results = detector.detect(image);
-        debugPrint(results);
-        return results;
+        List<DetectionResult> finalResults = new ArrayList<>(results.size());
+        for (Detection detection : results) {
+            Category category = detection.getCategories().get(0);
+            finalResults.add(new DetectionResult(category.getLabel(), category.getScore()));
+        }
+        if (BuildConfig.DEBUG) {
+            debugPrint(results);
+        }
+        return finalResults;
+    }
+
+    /**
+     * Runs object detection on bitmap and returns detected objects list
+     *
+     * @param bitmap bitmap image to run object detection on
+     * @param listener callback with detected results
+     * @throws IOException when accessing corrupted or TF model file or not finding the model file path
+     */
+    public void runObjectDetection(Bitmap bitmap, OnDetectionResultsListener listener) throws IOException {
+        TensorImage image = TensorImage.fromBitmap(bitmap);
+
+        if (detector == null) {
+            throw new IOException("failed to access TF model file");
+        }
+
+        List<Detection> results = detector.detect(image);
+        List<DetectionResult> finalResults = new ArrayList<>(results.size());
+        for (Detection detection : results) {
+            Category category = detection.getCategories().get(0);
+            finalResults.add(new DetectionResult(category.getLabel(), category.getScore()));
+        }
+        if (BuildConfig.DEBUG) {
+            debugPrint(results);
+        }
+        listener.onDetected(finalResults);
     }
 
     /**
@@ -123,7 +156,7 @@ public class StingleImageRecognition {
      * @return detected objects list
      * @throws IOException when accessing corrupted or TF model file or not finding the model file path
      */
-    public List<Detection> runObjectDetection(Bitmap bitmap, ImageView inputImageView) throws IOException {
+    public List<DetectionResult> runObjectDetection(Bitmap bitmap, ImageView inputImageView) throws IOException {
         TensorImage image = TensorImage.fromBitmap(bitmap);
 
         if (detector == null) {
@@ -134,7 +167,8 @@ public class StingleImageRecognition {
 
         // Step 4: Parse the detection result and show it
 
-        List<DetectionResult> finalResultsToDisplay = new ArrayList<>(results.size());
+        List<DetectionResultBox> finalResultsToDisplay = new ArrayList<>(results.size());
+        List<DetectionResult> finalResults = new ArrayList<>(results.size());
 
         for (Detection detection : results) {
             // Get the top-1 category and craft the display text
@@ -142,14 +176,16 @@ public class StingleImageRecognition {
             String text = category.getLabel() + " " + (int) (category.getScore() * 100);
 
             // Create a data object to display the detection result
-            finalResultsToDisplay.add(new DetectionResult(detection.getBoundingBox(), text));
+            finalResultsToDisplay.add(new DetectionResultBox(detection.getBoundingBox(), text));
+
+            finalResults.add(new DetectionResult(category.getLabel(), category.getScore()));
         }
 
         // Draw the detection result on the bitmap and show it.
         Bitmap imgWithResult = drawDetectionResult(bitmap, finalResultsToDisplay);
         inputImageView.setImageBitmap(imgWithResult);
 
-        return results;
+        return finalResults;
     }
 
     /* Helper Methods */
@@ -173,13 +209,13 @@ public class StingleImageRecognition {
 
     private Bitmap drawDetectionResult(
             Bitmap bitmap,
-            List<DetectionResult> detectionResults) {
+            List<DetectionResultBox> detectionResults) {
         Bitmap outputBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
         Canvas canvas = new Canvas(outputBitmap);
         Paint pen = new Paint();
         pen.setTextAlign(Paint.Align.LEFT);
 
-        for (DetectionResult r : detectionResults) {
+        for (DetectionResultBox r : detectionResults) {
             // draw bounding box
             pen.setColor(Color.RED);
             pen.setStrokeWidth(8F);
@@ -211,14 +247,28 @@ public class StingleImageRecognition {
         return outputBitmap;
     }
 
-    private static class DetectionResult {
+    public static class DetectionResult {
+        final String label;
+        final float score;
+
+        public DetectionResult(final String label, final float score) {
+            this.label = label;
+            this.score = score;
+        }
+    }
+
+    private static class DetectionResultBox {
 
         final RectF boundingBox;
         final String text;
 
-        DetectionResult(final RectF boundingBox, final String text) {
+        DetectionResultBox(final RectF boundingBox, final String text) {
             this.boundingBox = boundingBox;
             this.text = text;
         }
+    }
+
+    public interface OnDetectionResultsListener {
+        void onDetected(List<DetectionResult> results);
     }
 }
