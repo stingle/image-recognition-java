@@ -1,7 +1,9 @@
 package org.stingle.imagerecognition;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.*;
+import android.media.MediaMetadataRetriever;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -12,7 +14,10 @@ import org.tensorflow.lite.task.vision.detector.ObjectDetector;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public class StingleImageRecognition {
 
@@ -125,7 +130,7 @@ public class StingleImageRecognition {
     /**
      * Runs object detection on bitmap and returns detected objects list
      *
-     * @param bitmap bitmap image to run object detection on
+     * @param bitmap   bitmap image to run object detection on
      * @param listener callback with detected results
      * @throws IOException when accessing corrupted or TF model file or not finding the model file path
      */
@@ -188,6 +193,32 @@ public class StingleImageRecognition {
         return finalResults;
     }
 
+    public Set<DetectionResult> runVideoObjectDetection(AssetFileDescriptor afd,
+                                                        long duration,
+                                                        long skipFrameDelay) throws Exception {
+        if (detector == null) {
+            throw new IOException("failed to access TF model file");
+        }
+        if (skipFrameDelay >= duration) {
+            throw new Exception("skip delay need to be lower number than duration.");
+        }
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+
+        int framesCount = (int) (duration / 1000);
+        List<DetectionResult> finalResults = new ArrayList<>();
+        for (int i = 0; i < framesCount; ++i) {
+            Bitmap bitmap = retriever.getFrameAtTime(i * skipFrameDelay,
+                    MediaMetadataRetriever.OPTION_CLOSEST).copy(Bitmap.Config.ARGB_8888, true);
+            if (bitmap != null) {
+                finalResults.addAll(runObjectDetection(bitmap));
+            }
+        }
+
+        // removing duplicates
+        return new HashSet<>(finalResults);
+    }
+
     /* Helper Methods */
 
     private void debugPrint(List<Detection> results) {
@@ -247,13 +278,34 @@ public class StingleImageRecognition {
         return outputBitmap;
     }
 
-    public static class DetectionResult {
+    public static class DetectionResult implements Comparable<DetectionResult> {
         final String label;
         final float score;
 
         public DetectionResult(final String label, final float score) {
             this.label = label;
             this.score = score;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            DetectionResult that = (DetectionResult) o;
+            return label.equals(that.label);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(label);
+        }
+
+        @Override
+        public int compareTo(DetectionResult other) {
+            if (other.label.equals(this.label)) {
+                return 0;
+            }
+            return this.label.compareTo(other.label);
         }
     }
 
