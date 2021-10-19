@@ -215,6 +215,36 @@ public class StingleImageRecognition {
             }
         }
 
+        retriever.release();
+
+        // removing duplicates
+        return new HashSet<>(finalResults);
+    }
+
+    public Set<DetectionResult> runVideoObjectDetection(String videoPath,
+                                                        long duration,
+                                                        long skipFrameDelay) throws Exception {
+        if (detector == null) {
+            throw new IOException("failed to access TF model file");
+        }
+        if (skipFrameDelay >= duration) {
+            throw new Exception("skip delay need to be lower number than duration.");
+        }
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(videoPath);
+
+        int framesCount = (int) (duration / 1000);
+        List<DetectionResult> finalResults = new ArrayList<>();
+        for (int i = 0; i < framesCount; ++i) {
+            Bitmap bitmap = retriever.getFrameAtTime(i * skipFrameDelay,
+                    MediaMetadataRetriever.OPTION_CLOSEST).copy(Bitmap.Config.ARGB_8888, true);
+            if (bitmap != null) {
+                finalResults.addAll(runObjectDetection(bitmap));
+            }
+        }
+
+        retriever.release();
+
         // removing duplicates
         return new HashSet<>(finalResults);
     }
