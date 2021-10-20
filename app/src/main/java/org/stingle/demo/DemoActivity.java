@@ -1,4 +1,4 @@
-package org.stingle.imagerecognition;
+package org.stingle.demo;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
