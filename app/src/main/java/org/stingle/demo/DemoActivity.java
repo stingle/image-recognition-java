@@ -5,10 +5,13 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -21,6 +24,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.stingle.imagerecognition.StingleImageRecognition;
 
@@ -40,11 +44,34 @@ public class DemoActivity extends AppCompatActivity implements View.OnClickListe
     private String currentPhotoPath;
     private StingleImageRecognition imageDetector;
 
-    private final ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
+    private final ActivityResultLauncher<Intent> cameraActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     try {
+                        setViewAndDetect(getCapturedImage());
+                    } catch (Exception e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                }
+            });
+
+    private final ActivityResultLauncher<String> requestReadStoragePermission = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (!isGranted) {
+                    Toast.makeText(this, "Enable read storage permission", Toast.LENGTH_LONG).show();
+                } else {
+                    dispatchGalleryPictureIntent();
+                }
+            }
+    );
+
+    private final ActivityResultLauncher<Intent> galleryActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    try {
+                        currentPhotoPath = getRealPathFromURI(this, result.getData().getData());
                         setViewAndDetect(getCapturedImage());
                     } catch (Exception e) {
                         Log.d(TAG, e.getMessage());
@@ -73,6 +100,10 @@ public class DemoActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             }
+            case R.id.chooseImageFab: {
+                requestReadStoragePermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+                break;
+            }
             case R.id.imgSampleOne: {
                 setViewAndDetect(getSampleImage(R.drawable.img_one));
                 break;
@@ -93,6 +124,7 @@ public class DemoActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.imgSampleTwo).setOnClickListener(this);
         findViewById(R.id.imgSampleThree).setOnClickListener(this);
         findViewById(R.id.captureImageFab).setOnClickListener(this);
+        findViewById(R.id.chooseImageFab).setOnClickListener(this);
 
         inputImageView = findViewById(R.id.imageView);
         tvPlaceholder = findViewById(R.id.tvPlaceholder);
@@ -146,8 +178,14 @@ public class DemoActivity extends AppCompatActivity implements View.OnClickListe
                     photoFile
             );
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-            someActivityResultLauncher.launch(takePictureIntent);
+            cameraActivityResultLauncher.launch(takePictureIntent);
         }
+    }
+
+    private void dispatchGalleryPictureIntent() {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        galleryActivityResultLauncher.launch(photoPickerIntent);
     }
 
     private File createImageFile() throws IOException {
@@ -216,5 +254,20 @@ public class DemoActivity extends AppCompatActivity implements View.OnClickListe
                 source, 0, 0, source.getWidth(), source.getHeight(),
                 matrix, true
         );
+    }
+
+    private String getRealPathFromURI(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 }
