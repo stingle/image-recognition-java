@@ -19,6 +19,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    libraryVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "stingle-imagerecognition-${defaultConfig.versionName}.aar"
+        }
+    }
 }
 
 dependencies {

@@ -1,11 +1,10 @@
-package org.stingle.demo;
+package org.stingle.imagerecognition;
 
 import android.content.Context;
 import android.graphics.*;
 import android.util.Log;
 import android.widget.ImageView;
 
-import org.stingle.imagerecognition.BuildConfig;
 import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.label.Category;
 import org.tensorflow.lite.task.vision.detector.Detection;

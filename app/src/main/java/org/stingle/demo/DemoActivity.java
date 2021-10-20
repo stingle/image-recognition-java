@@ -22,6 +22,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.stingle.imagerecognition.StingleImageRecognition;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
