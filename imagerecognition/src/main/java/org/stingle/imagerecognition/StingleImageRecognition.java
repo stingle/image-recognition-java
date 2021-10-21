@@ -248,12 +248,20 @@ public class StingleImageRecognition {
     }
 
     public static class DetectionResult {
-        final String label;
-        final float score;
+        private final String label;
+        private final float score;
 
         public DetectionResult(final String label, final float score) {
             this.label = label;
             this.score = score;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public float getScore() {
+            return score;
         }
     }
 
