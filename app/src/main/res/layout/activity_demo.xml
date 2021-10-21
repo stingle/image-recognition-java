@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.stingle.imagerecognition.DemoActivity">
+    tools:context="org.stingle.demo.DemoActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -43,7 +43,7 @@
         android:id="@+id/llSampleImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/captureImageFab"
+        android:layout_above="@+id/buttonsContainer"
         android:gravity="center_horizontal"
         android:orientation="horizontal">
 
@@ -77,16 +77,37 @@
             android:src="@drawable/img_three" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/buttonsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center">
+
     <Button
         android:id="@+id/captureImageFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center|bottom"
-        android:layout_margin="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:drawableStart="@drawable/ic_camera"
         android:text="@string/tv_take_photo"
         android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/chooseImageFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:drawableStart="@drawable/ic_gallery"
+        android:text="@string/tv_choose_photo"
+        android:textAllCaps="false" />
+    </LinearLayout>
 
 </RelativeLayout>
