@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.*;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -249,6 +250,34 @@ public class StingleImageRecognition {
         return new HashSet<>(finalResults);
     }
 
+    public Set<DetectionResult> runVideoObjectDetection(Uri videoUri,
+                                                        long duration,
+                                                        long skipFrameDelay) throws Exception {
+        if (detector == null) {
+            throw new IOException("failed to access TF model file");
+        }
+        if (skipFrameDelay >= duration) {
+            throw new Exception("skip delay need to be lower number than duration.");
+        }
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(context, videoUri);
+
+        int framesCount = (int) (duration / 1000);
+        List<DetectionResult> finalResults = new ArrayList<>();
+        for (int i = 0; i < framesCount; ++i) {
+            Bitmap bitmap = retriever.getFrameAtTime(i * skipFrameDelay,
+                    MediaMetadataRetriever.OPTION_CLOSEST).copy(Bitmap.Config.ARGB_8888, true);
+            if (bitmap != null) {
+                finalResults.addAll(runObjectDetection(bitmap));
+            }
+        }
+
+        retriever.release();
+
+        // removing duplicates
+        return new HashSet<>(finalResults);
+    }
+
     /* Helper Methods */
 
     private void debugPrint(List<Detection> results) {
@@ -309,8 +338,8 @@ public class StingleImageRecognition {
     }
 
     public static class DetectionResult implements Comparable<DetectionResult> {
-        final String label;
-        final float score;
+        public final String label;
+        public final float score;
 
         public DetectionResult(final String label, final float score) {
             this.label = label;

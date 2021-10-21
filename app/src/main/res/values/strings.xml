@@ -2,5 +2,6 @@
     <string name="app_name">image-recognition-java</string>
     <string name="tv_take_photo">Take photo</string>
     <string name="tv_choose_photo">Choose photo</string>
+    <string name="tv_video">Video</string>
     <string name="tv_description">Select a preset image or take a new photo</string>
 </resources>
