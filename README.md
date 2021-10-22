@@ -59,6 +59,13 @@ try {
 } catch (Exception e) {
         Log.d(TAG, e.getMessage());
 }
+
+// preparing bitmap before passing to image detection library:
+Bitmap rotatedBitmap = imageDetector.prepareBitmap(currentPhotoPath); // using best practice sizes by TFLite library
+or
+Bitmap rotatedBitmap = imageDetector.prepareBitmap(currentPhotoPath, 300, 400); // width and height specification
+or
+Bitmap rotatedBitmap = imageDetector.prepareBitmap(currentPhotoPath, inputImageView); // retrieving sizes from passed imageview
 ```
 
 ***An important point: try to always run the object detection functionns on the background thread to not to block the main/UI thread.***
