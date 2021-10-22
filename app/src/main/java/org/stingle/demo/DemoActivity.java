@@ -14,8 +14,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -49,7 +47,8 @@ public class DemoActivity extends AppCompatActivity implements View.OnClickListe
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     try {
-                        setViewAndDetect(getCapturedImage());
+                        // prepare bitmap function scales and rotates the bitmap
+                        setViewAndDetect(imageDetector.prepareBitmap(currentPhotoPath));
                     } catch (Exception e) {
                         Log.d(TAG, e.getMessage());
                     }
@@ -71,8 +70,11 @@ public class DemoActivity extends AppCompatActivity implements View.OnClickListe
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     try {
-                        currentPhotoPath = getRealPathFromURI(this, result.getData().getData());
-                        setViewAndDetect(getCapturedImage());
+                        if (result.getData() != null) {
+                            currentPhotoPath = getRealPathFromURI(this, result.getData().getData());
+                            // prepare bitmap function scales and rotates the bitmap
+                            setViewAndDetect(imageDetector.prepareBitmap(currentPhotoPath, inputImageView));
+                        }
                     } catch (Exception e) {
                         Log.d(TAG, e.getMessage());
                     }
@@ -206,59 +208,6 @@ public class DemoActivity extends AppCompatActivity implements View.OnClickListe
         currentPhotoPath = file.getAbsolutePath();
 
         return file;
-    }
-
-    private Bitmap getCapturedImage() throws IOException {
-        // Get the dimensions of the View
-        int targetW = inputImageView.getWidth();
-        int targetH = inputImageView.getWidth();
-
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        // Get the dimensions of the bitmap
-        bmOptions.inJustDecodeBounds = true;
-
-        BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        // Determine how much to scale down the image
-        int scaleFactor = Math.max(1, Math.min(photoW / targetW, photoH / targetH));
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-        bmOptions.inMutable = true;
-        ExifInterface exifInterface = new ExifInterface(currentPhotoPath);
-        int orientation = exifInterface.getAttributeInt(
-                ExifInterface.TAG_ORIENTATION,
-                ExifInterface.ORIENTATION_UNDEFINED
-        );
-
-        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
-
-        switch (orientation) {
-            case ExifInterface.ORIENTATION_ROTATE_90: {
-                return rotateImage(bitmap, 90f);
-            }
-            case ExifInterface.ORIENTATION_ROTATE_180: {
-                return rotateImage(bitmap, 180f);
-            }
-            case ExifInterface.ORIENTATION_ROTATE_270: {
-                return rotateImage(bitmap, 270f);
-            }
-            default: {
-                return bitmap;
-            }
-        }
-    }
-
-    private Bitmap rotateImage(Bitmap source, Float angle) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        return Bitmap.createBitmap(
-                source, 0, 0, source.getWidth(), source.getHeight(),
-                matrix, true
-        );
     }
 
     private String getRealPathFromURI(Context context, Uri contentUri) {
