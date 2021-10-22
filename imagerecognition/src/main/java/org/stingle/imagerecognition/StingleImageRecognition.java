@@ -2,6 +2,8 @@ package org.stingle.imagerecognition;
 
 import android.content.Context;
 import android.graphics.*;
+
+import android.media.ExifInterface;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -18,6 +20,10 @@ public class StingleImageRecognition {
 
     private static final String TAG = "Stingle - ODT";
     private static final float MAX_FONT_SIZE = 96F;
+
+    // best practice sizes for tesnorflow image classification
+    public static final int IMG_SIZE_WIDTH = 256;
+    public static final int IMG_SIZE_HEIGHT = 256;
 
     private final Context context;
     private final String modelPath;
@@ -188,6 +194,41 @@ public class StingleImageRecognition {
         return finalResults;
     }
 
+    /**
+     *
+     * @param imagePath image file absolute path
+     * @param inputImageView imageview for the retrieving width and height
+     * @return scaled and rotated bitmap
+     */
+    public Bitmap prepareBitmap(String imagePath, ImageView inputImageView) {
+        // Get the dimensions of the View
+        int targetW = inputImageView.getWidth();
+        int targetH = inputImageView.getWidth();
+
+        return scaleAndRotateBitmap(imagePath, targetW, targetH);
+    }
+
+    /**
+     *
+     * @param imagePath image file absolute path
+     * @param width  to apply bitmap options for specified width
+     * @param height to apply bitmap options for specified height
+     * @return scaled and rotated bitmap
+     */
+    public Bitmap prepareBitmap(String imagePath, int width, int height) {
+       return scaleAndRotateBitmap(imagePath, width, height);
+    }
+
+
+    /**
+     *
+     * @param imagePath image file absolute path
+     * @return scaled and rotated bitmap with best practice sizes by TF
+     */
+    public Bitmap prepareBitmap(String imagePath) {
+        return scaleAndRotateBitmap(imagePath, IMG_SIZE_WIDTH, IMG_SIZE_HEIGHT);
+    }
+
     /* Helper Methods */
 
     private void debugPrint(List<Detection> results) {
@@ -245,6 +286,59 @@ public class StingleImageRecognition {
         }
 
         return outputBitmap;
+    }
+
+    private Bitmap scaleAndRotateBitmap(String imagePath, int width, int height) {
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        // Get the dimensions of the bitmap
+        bmOptions.inJustDecodeBounds = true;
+
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.max(1, Math.min(photoW / width, photoH / height));
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inMutable = true;
+        int orientation = ExifInterface.ORIENTATION_UNDEFINED;
+        try {
+            ExifInterface exifInterface = new ExifInterface(imagePath);
+            orientation = exifInterface.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED
+            );
+        } catch (Exception e) {
+            Log.d(TAG, e.getMessage());
+        }
+
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
+
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90: {
+                return rotateImage(bitmap, 90f);
+            }
+            case ExifInterface.ORIENTATION_ROTATE_180: {
+                return rotateImage(bitmap, 180f);
+            }
+            case ExifInterface.ORIENTATION_ROTATE_270: {
+                return rotateImage(bitmap, 270f);
+            }
+            default: {
+                return bitmap;
+            }
+        }
+    }
+
+    private Bitmap rotateImage(Bitmap source, Float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(
+                source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true
+        );
     }
 
     public static class DetectionResult {
