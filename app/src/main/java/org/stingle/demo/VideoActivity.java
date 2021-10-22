@@ -48,12 +48,12 @@ public class VideoActivity extends AppCompatActivity implements View.OnClickList
         resultsView = findViewById(R.id.results);
         VideoView videoView = findViewById(R.id.videoView);
 
-        videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.sample));
+        videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.sample_1));
         videoView.start();
 
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("please wait");
-        progressDialog.setTitle("video processing....");
+        progressDialog.setTitle("please wait");
+        progressDialog.setMessage("video processing....");
         progressDialog.setCancelable(false);
     }
 
@@ -70,13 +70,13 @@ public class VideoActivity extends AppCompatActivity implements View.OnClickList
         progressDialog.show();
         backgroundExecutor.execute(() -> {
             try {
-                Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.sample);
+                Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.sample_1);
                 Set<StingleImageRecognition.DetectionResult> results =
                         videoDetector.runVideoObjectDetection(videoUri, 50_000L, 3_000L);
                 System.out.println("results.size() = " + results.size());
                 StringBuilder sb = new StringBuilder();
                 for (StingleImageRecognition.DetectionResult el : results) {
-                    sb.append(el.label);
+                    sb.append(el.getLabel());
                     sb.append(", ");
                 }
                 mainExecutor.execute(() -> {

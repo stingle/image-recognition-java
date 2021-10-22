@@ -378,9 +378,6 @@ public class StingleImageRecognition {
         return outputBitmap;
     }
 
-    public static class DetectionResult implements Comparable<DetectionResult> {
-        public final String label;
-        public final float score;
     private Bitmap scaleAndRotateBitmap(String imagePath, int width, int height) {
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         // Get the dimensions of the bitmap
