@@ -80,4 +80,4 @@ Minimum Android SDK: Stingle image recognition requires a minimum API level of 2
 
 **License**
 
-Apache 2.0. See the [LICENSE](https://github.com/Armen101/AudioRecordView/blob/master/LICENSE). file for details.
+Apache 2.0. See the [LICENSE](https://github.com/stingle/image-recognition-java/blob/main/LICENSE). file for details.
