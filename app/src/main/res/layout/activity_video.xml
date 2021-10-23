@@ -14,6 +14,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"/>
 
+
     <TextView
         android:id="@+id/results"
         android:layout_width="match_parent"
@@ -23,6 +24,68 @@
         android:layout_marginEnd="16dp"
         android:textSize="20sp"
         android:textColor="@android:color/holo_green_dark"/>
+
+    <LinearLayout
+        android:id="@+id/samplesContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/results"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/sample1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:textColor="@color/black"
+            android:text="sample 1" />
+
+        <TextView
+            android:id="@+id/sample2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:textColor="@color/black"
+            android:text="sample 2" />
+
+        <TextView
+            android:id="@+id/sample3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:textColor="@color/black"
+            android:text="sample 3" />
+
+        <TextView
+            android:id="@+id/sample4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:textColor="@color/black"
+            android:text="sample 4" />
+
+        <TextView
+            android:id="@+id/sample5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:textColor="@color/black"
+            android:text="sample 5" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/runBtn"
