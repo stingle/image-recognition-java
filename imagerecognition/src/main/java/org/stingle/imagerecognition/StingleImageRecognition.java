@@ -200,6 +200,17 @@ public class StingleImageRecognition {
         return finalResults;
     }
 
+    /**
+     * Runs video detection on assets video file and returns the detected objects UNIQUE list
+     *
+     * @param afd assets video file descriptor
+     * @param duration the original video duration in millis
+     * @param skipFrameDelay skip frames delay in millis (example: when skipFrameDelay is passed 5_000L,
+     *                       then the video corresponding frames should be processed by video detector:
+     *                       0, 5000, 10000, etc... until duration)
+     * @return the detected UNIQUE objects
+     * @throws Exception when assets file is corrupted or media retriever can't open it
+     */
     public Set<DetectionResult> runVideoObjectDetection(AssetFileDescriptor afd,
                                                         long duration,
                                                         long skipFrameDelay) throws Exception {
@@ -231,6 +242,17 @@ public class StingleImageRecognition {
         return new HashSet<>(finalResults);
     }
 
+    /**
+     * Runs video detection on passed video file absolute path and returns the detected objects UNIQUE list
+     *
+     * @param videoPath any video file absolute path
+     * @param duration the original video duration in millis
+     * @param skipFrameDelay skip frames delay in millis (example: when skipFrameDelay is passed 5_000L,
+     *                       then the video corresponding frames should be processed by video detector:
+     *                       0, 5000, 10000, etc... until duration)
+     * @return the detected UNIQUE objects
+     * @throws Exception when passed video file is corrupted, not found, permission denied or media retriever can't open it
+     */
     public Set<DetectionResult> runVideoObjectDetection(String videoPath,
                                                         long duration,
                                                         long skipFrameDelay) throws Exception {
@@ -262,6 +284,17 @@ public class StingleImageRecognition {
         return new HashSet<>(finalResults);
     }
 
+    /**
+     * Runs video detection on passed video file uri and returns the detected objects UNIQUE list
+     *
+     * @param videoUri any video file absolute path
+     * @param duration the original video duration in millis
+     * @param skipFrameDelay skip frames delay in millis (example: when skipFrameDelay is passed 5_000L,
+     *                       then the video corresponding frames should be processed by video detector:
+     *                       0, 5000, 10000, etc... until duration)
+     * @return the detected UNIQUE objects
+     * @throws Exception when passed video file uri is corrupted, not found, permission denied or media retriever can't open it
+     */
     public Set<DetectionResult> runVideoObjectDetection(Uri videoUri,
                                                         long duration,
                                                         long skipFrameDelay) throws Exception {
