@@ -212,13 +212,16 @@ public class StingleImageRecognition {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
 
-        int framesCount = (int) (duration / 1000);
         List<DetectionResult> finalResults = new ArrayList<>();
-        for (int i = 0; i < framesCount; ++i) {
-            Bitmap bitmap = retriever.getFrameAtTime(i * skipFrameDelay,
-                    MediaMetadataRetriever.OPTION_CLOSEST).copy(Bitmap.Config.ARGB_8888, true);
-            if (bitmap != null) {
-                finalResults.addAll(runObjectDetection(bitmap));
+        for (long i = 0; i < duration; i = i + skipFrameDelay) {
+            try {
+                Bitmap bitmap = retriever.getFrameAtTime(i,
+                        MediaMetadataRetriever.OPTION_CLOSEST).copy(Bitmap.Config.ARGB_8888, true);
+                if (bitmap != null) {
+                    finalResults.addAll(runObjectDetection(bitmap));
+                }
+            } catch (Exception e) {
+                Log.d(TAG, e.getMessage());
             }
         }
 
@@ -240,13 +243,16 @@ public class StingleImageRecognition {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(videoPath);
 
-        int framesCount = (int) (duration / 1000);
         List<DetectionResult> finalResults = new ArrayList<>();
-        for (int i = 0; i < framesCount; ++i) {
-            Bitmap bitmap = retriever.getFrameAtTime(i * skipFrameDelay,
-                    MediaMetadataRetriever.OPTION_CLOSEST).copy(Bitmap.Config.ARGB_8888, true);
-            if (bitmap != null) {
-                finalResults.addAll(runObjectDetection(bitmap));
+        for (long i = 0; i < duration; i = i + skipFrameDelay) {
+            try {
+                Bitmap bitmap = retriever.getFrameAtTime(i,
+                        MediaMetadataRetriever.OPTION_CLOSEST).copy(Bitmap.Config.ARGB_8888, true);
+                if (bitmap != null) {
+                    finalResults.addAll(runObjectDetection(bitmap));
+                }
+            } catch (Exception e) {
+                Log.d(TAG, e.getMessage());
             }
         }
 
@@ -268,13 +274,16 @@ public class StingleImageRecognition {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(context, videoUri);
 
-        int framesCount = (int) (duration / 1000);
         List<DetectionResult> finalResults = new ArrayList<>();
-        for (int i = 0; i < framesCount; ++i) {
-            Bitmap bitmap = retriever.getFrameAtTime(i * skipFrameDelay,
-                    MediaMetadataRetriever.OPTION_CLOSEST).copy(Bitmap.Config.ARGB_8888, true);
-            if (bitmap != null) {
-                finalResults.addAll(runObjectDetection(bitmap));
+        for (long i = 0; i < duration; i = i + skipFrameDelay) {
+            try {
+                Bitmap bitmap = retriever.getFrameAtTime(i,
+                        MediaMetadataRetriever.OPTION_CLOSEST).copy(Bitmap.Config.ARGB_8888, true);
+                if (bitmap != null) {
+                    finalResults.addAll(runObjectDetection(bitmap));
+                }
+            } catch (Exception e) {
+                Log.d(TAG, e.getMessage());
             }
         }
 
