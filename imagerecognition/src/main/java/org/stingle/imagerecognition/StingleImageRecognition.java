@@ -330,6 +330,49 @@ public class StingleImageRecognition {
     }
 
     /**
+     * Runs video detection on passed video file uri and returns the detected objects UNIQUE list
+     *
+     * @param videoUri any video file absolute path
+     * @param duration the original video duration in millis
+     * @param factor   the factor of video duration to be processed (example: when video duration
+     *                 is 10 seconds and factor passed to 0.5f then the 5 seconds of the full 10
+     *                 seconds video will be processed (frames in the whole video)
+     *                 Note: OPTION_CLOSEST returns KEY FRAME!
+     * @return the detected UNIQUE objects
+     * @throws Exception when passed video file uri is corrupted, not found, permission denied or media retriever can't open it
+     */
+    public Set<DetectionResult> runVideoObjectDetection(Uri videoUri,
+                                                        long duration,
+                                                        float factor) throws Exception {
+        if (detector == null) {
+            throw new IOException("failed to access TF model file");
+        }
+        if (factor <= 0f || factor > 1.0f) {
+            throw new Exception("factor parameter must be grater then 0 and lower then 1");
+        }
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(context, videoUri);
+
+        List<DetectionResult> finalResults = new ArrayList<>();
+        for (long i = 0; i < duration; i = i + (int) (1 / factor) * 1000L) {
+            try {
+                Bitmap bitmap = retriever.getFrameAtTime(i,
+                        MediaMetadataRetriever.OPTION_CLOSEST).copy(Bitmap.Config.ARGB_8888, true);
+                if (bitmap != null) {
+                    finalResults.addAll(runObjectDetection(bitmap));
+                }
+            } catch (Exception e) {
+                Log.d(TAG, e.getMessage());
+            }
+        }
+
+        retriever.release();
+
+        // removing duplicates
+        return new HashSet<>(finalResults);
+    }
+
+    /**
      * @param imagePath      image file absolute path
      * @param inputImageView imageview for the retrieving width and height
      * @return scaled and rotated bitmap
