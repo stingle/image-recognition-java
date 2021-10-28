@@ -70,7 +70,7 @@ Bitmap rotatedBitmap = imageDetector.prepareBitmap(currentPhotoPath, inputImageV
 
 Runing object detection on the video file:
 
-```
+```java
 // getting detected objects from the video file located on the raw folder.
 try {
         Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.sample_1);
