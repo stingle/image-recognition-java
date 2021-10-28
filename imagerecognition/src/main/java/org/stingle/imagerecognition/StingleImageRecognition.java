@@ -203,11 +203,12 @@ public class StingleImageRecognition {
     /**
      * Runs video detection on assets video file and returns the detected objects UNIQUE list
      *
-     * @param afd assets video file descriptor
-     * @param duration the original video duration in millis
+     * @param afd            assets video file descriptor
+     * @param duration       the original video duration in millis
      * @param skipFrameDelay skip frames delay in millis (example: when skipFrameDelay is passed 5_000L,
      *                       then the video corresponding frames should be processed by video detector:
-     *                       0, 5000, 10000, etc... until duration)
+     *                       0, 5000, 10000, etc... until duration).
+     *                       Note: OPTION_CLOSEST returns KEY FRAME!
      * @return the detected UNIQUE objects
      * @throws Exception when assets file is corrupted or media retriever can't open it
      */
@@ -245,11 +246,12 @@ public class StingleImageRecognition {
     /**
      * Runs video detection on passed video file absolute path and returns the detected objects UNIQUE list
      *
-     * @param videoPath any video file absolute path
-     * @param duration the original video duration in millis
+     * @param videoPath      any video file absolute path
+     * @param duration       the original video duration in millis
      * @param skipFrameDelay skip frames delay in millis (example: when skipFrameDelay is passed 5_000L,
      *                       then the video corresponding frames should be processed by video detector:
-     *                       0, 5000, 10000, etc... until duration)
+     *                       0, 5000, 10000, etc... until duration).
+     *                       Note: OPTION_CLOSEST returns KEY FRAME!
      * @return the detected UNIQUE objects
      * @throws Exception when passed video file is corrupted, not found, permission denied or media retriever can't open it
      */
@@ -287,11 +289,12 @@ public class StingleImageRecognition {
     /**
      * Runs video detection on passed video file uri and returns the detected objects UNIQUE list
      *
-     * @param videoUri any video file absolute path
-     * @param duration the original video duration in millis
+     * @param videoUri       any video file absolute path
+     * @param duration       the original video duration in millis
      * @param skipFrameDelay skip frames delay in millis (example: when skipFrameDelay is passed 5_000L,
      *                       then the video corresponding frames should be processed by video detector:
-     *                       0, 5000, 10000, etc... until duration)
+     *                       0, 5000, 10000, etc... until duration).
+     *                       Note: OPTION_CLOSEST returns KEY FRAME!
      * @return the detected UNIQUE objects
      * @throws Exception when passed video file uri is corrupted, not found, permission denied or media retriever can't open it
      */
@@ -327,8 +330,7 @@ public class StingleImageRecognition {
     }
 
     /**
-     *
-     * @param imagePath image file absolute path
+     * @param imagePath      image file absolute path
      * @param inputImageView imageview for the retrieving width and height
      * @return scaled and rotated bitmap
      */
@@ -341,19 +343,16 @@ public class StingleImageRecognition {
     }
 
     /**
-     *
      * @param imagePath image file absolute path
-     * @param width  to apply bitmap options for specified width
-     * @param height to apply bitmap options for specified height
+     * @param width     to apply bitmap options for specified width
+     * @param height    to apply bitmap options for specified height
      * @return scaled and rotated bitmap
      */
     public Bitmap prepareBitmap(String imagePath, int width, int height) {
-       return scaleAndRotateBitmap(imagePath, width, height);
+        return scaleAndRotateBitmap(imagePath, width, height);
     }
 
-
     /**
-     *
      * @param imagePath image file absolute path
      * @return scaled and rotated bitmap with best practice sizes by TF
      */
