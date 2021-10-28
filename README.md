@@ -1,6 +1,6 @@
-**Stingle Image Recognition**
+**Stingle Object Recognition**
 
-*Library for detecting objects from the image using TensorFlow open source library*
+*Library for detecting objects from the image and video using TensorFlow open source library*
 
 ![](https://avatars.githubusercontent.com/u/69607920?s=200&v=4)
 
@@ -33,7 +33,7 @@ After adding the dependency you will find the module dependency in your app leve
 Find or train the best TFLite model file for you and add into your app under assets folder.
 [there are several already trained models to use](https://tfhub.dev/tensorflow/collections/lite/task-library/object-detector/1)
 
-You can execute this code to get an image recognition instance.
+You can execute this code to get an object recognition instance.
 
 ```java
  StingleImageRecognition imageDetector = new StingleImageRecognition.Builder(this)
@@ -67,6 +67,37 @@ Bitmap rotatedBitmap = imageDetector.prepareBitmap(currentPhotoPath, 300, 400); 
 or
 Bitmap rotatedBitmap = imageDetector.prepareBitmap(currentPhotoPath, inputImageView); // retrieving sizes from passed imageview
 ```
+
+Runing object detection on the video file:
+
+```
+// getting detected objects from the video file located on the raw folder.
+try {
+        Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.sample_1);
+        Set<StingleImageRecognition.DetectionResult> results =
+                      imageDetector.runVideoObjectDetection(videoUri, 20_000L, 2_000L);
+} catch (Exception e) {
+        Log.d(TAG, e.getMessage());
+}
+
+// getting detected objects from the specific video file path or media uri.
+try {
+        Set<StingleImageRecognition.DetectionResult> results =
+                      imageDetector.runVideoObjectDetection(videoFilePath, 10_000L, 1_000L);
+} catch (Exception e) {
+        Log.d(TAG, e.getMessage());
+}
+
+// getting detected objects from the specific video file path or media uri with the factor of skipping video frames.
+try {
+        Set<StingleImageRecognition.DetectionResult> results =
+                      imageDetector.runVideoObjectDetection(videoFilePath, 10_000L, 0.5f);
+} catch (Exception e) {
+        Log.d(TAG, e.getMessage());
+}
+
+```
+
 
 ***An important point: try to always run the object detection functionns on the background thread to not to block the main/UI thread.***
 

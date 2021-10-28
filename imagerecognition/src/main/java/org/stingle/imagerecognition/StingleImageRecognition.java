@@ -1,7 +1,10 @@
 package org.stingle.imagerecognition;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.*;
+import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 
 import android.media.ExifInterface;
 import android.util.Log;
@@ -14,7 +17,10 @@ import org.tensorflow.lite.task.vision.detector.ObjectDetector;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public class StingleImageRecognition {
 
@@ -131,7 +137,7 @@ public class StingleImageRecognition {
     /**
      * Runs object detection on bitmap and returns detected objects list
      *
-     * @param bitmap bitmap image to run object detection on
+     * @param bitmap   bitmap image to run object detection on
      * @param listener callback with detected results
      * @throws IOException when accessing corrupted or TF model file or not finding the model file path
      */
@@ -195,8 +201,179 @@ public class StingleImageRecognition {
     }
 
     /**
+     * Runs video detection on assets video file and returns the detected objects UNIQUE list
      *
-     * @param imagePath image file absolute path
+     * @param afd            assets video file descriptor
+     * @param duration       the original video duration in millis
+     * @param skipFrameDelay skip frames delay in millis (example: when skipFrameDelay is passed 5_000L,
+     *                       then the video corresponding frames should be processed by video detector:
+     *                       0, 5000, 10000, etc... until duration).
+     *                       Note: OPTION_CLOSEST returns KEY FRAME!
+     * @return the detected UNIQUE objects
+     * @throws Exception when assets file is corrupted or media retriever can't open it
+     */
+    public Set<DetectionResult> runVideoObjectDetection(AssetFileDescriptor afd,
+                                                        long duration,
+                                                        long skipFrameDelay) throws Exception {
+        if (detector == null) {
+            throw new IOException("failed to access TF model file");
+        }
+        if (skipFrameDelay >= duration) {
+            throw new Exception("skip delay need to be lower number than duration.");
+        }
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+
+        List<DetectionResult> finalResults = new ArrayList<>();
+        for (long i = 0; i < duration; i = i + skipFrameDelay) {
+            try {
+                Bitmap bitmap = retriever.getFrameAtTime(i,
+                        MediaMetadataRetriever.OPTION_CLOSEST).copy(Bitmap.Config.ARGB_8888, true);
+                if (bitmap != null) {
+                    finalResults.addAll(runObjectDetection(bitmap));
+                }
+            } catch (Exception e) {
+                Log.d(TAG, e.getMessage());
+            }
+        }
+
+        retriever.release();
+
+        // removing duplicates
+        return new HashSet<>(finalResults);
+    }
+
+    /**
+     * Runs video detection on passed video file absolute path and returns the detected objects UNIQUE list
+     *
+     * @param videoPath      any video file absolute path
+     * @param duration       the original video duration in millis
+     * @param skipFrameDelay skip frames delay in millis (example: when skipFrameDelay is passed 5_000L,
+     *                       then the video corresponding frames should be processed by video detector:
+     *                       0, 5000, 10000, etc... until duration).
+     *                       Note: OPTION_CLOSEST returns KEY FRAME!
+     * @return the detected UNIQUE objects
+     * @throws Exception when passed video file is corrupted, not found, permission denied or media retriever can't open it
+     */
+    public Set<DetectionResult> runVideoObjectDetection(String videoPath,
+                                                        long duration,
+                                                        long skipFrameDelay) throws Exception {
+        if (detector == null) {
+            throw new IOException("failed to access TF model file");
+        }
+        if (skipFrameDelay >= duration) {
+            throw new Exception("skip delay need to be lower number than duration.");
+        }
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(videoPath);
+
+        List<DetectionResult> finalResults = new ArrayList<>();
+        for (long i = 0; i < duration; i = i + skipFrameDelay) {
+            try {
+                Bitmap bitmap = retriever.getFrameAtTime(i,
+                        MediaMetadataRetriever.OPTION_CLOSEST).copy(Bitmap.Config.ARGB_8888, true);
+                if (bitmap != null) {
+                    finalResults.addAll(runObjectDetection(bitmap));
+                }
+            } catch (Exception e) {
+                Log.d(TAG, e.getMessage());
+            }
+        }
+
+        retriever.release();
+
+        // removing duplicates
+        return new HashSet<>(finalResults);
+    }
+
+    /**
+     * Runs video detection on passed video file uri and returns the detected objects UNIQUE list
+     *
+     * @param videoUri       any video file absolute path
+     * @param duration       the original video duration in millis
+     * @param skipFrameDelay skip frames delay in millis (example: when skipFrameDelay is passed 5_000L,
+     *                       then the video corresponding frames should be processed by video detector:
+     *                       0, 5000, 10000, etc... until duration).
+     *                       Note: OPTION_CLOSEST returns KEY FRAME!
+     * @return the detected UNIQUE objects
+     * @throws Exception when passed video file uri is corrupted, not found, permission denied or media retriever can't open it
+     */
+    public Set<DetectionResult> runVideoObjectDetection(Uri videoUri,
+                                                        long duration,
+                                                        long skipFrameDelay) throws Exception {
+        if (detector == null) {
+            throw new IOException("failed to access TF model file");
+        }
+        if (skipFrameDelay >= duration) {
+            throw new Exception("skip delay need to be lower number than duration.");
+        }
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(context, videoUri);
+
+        List<DetectionResult> finalResults = new ArrayList<>();
+        for (long i = 0; i < duration; i = i + skipFrameDelay) {
+            try {
+                Bitmap bitmap = retriever.getFrameAtTime(i,
+                        MediaMetadataRetriever.OPTION_CLOSEST).copy(Bitmap.Config.ARGB_8888, true);
+                if (bitmap != null) {
+                    finalResults.addAll(runObjectDetection(bitmap));
+                }
+            } catch (Exception e) {
+                Log.d(TAG, e.getMessage());
+            }
+        }
+
+        retriever.release();
+
+        // removing duplicates
+        return new HashSet<>(finalResults);
+    }
+
+    /**
+     * Runs video detection on passed video file uri and returns the detected objects UNIQUE list
+     *
+     * @param videoUri any video file absolute path
+     * @param duration the original video duration in millis
+     * @param factor   the factor of video duration to be processed (example: when video duration
+     *                 is 10 seconds and factor passed to 0.5f then the 5 seconds of the full 10
+     *                 seconds video will be processed (frames in the whole video)
+     *                 Note: OPTION_CLOSEST returns KEY FRAME!
+     * @return the detected UNIQUE objects
+     * @throws Exception when passed video file uri is corrupted, not found, permission denied or media retriever can't open it
+     */
+    public Set<DetectionResult> runVideoObjectDetection(Uri videoUri,
+                                                        long duration,
+                                                        float factor) throws Exception {
+        if (detector == null) {
+            throw new IOException("failed to access TF model file");
+        }
+        if (factor <= 0f || factor > 1.0f) {
+            throw new Exception("factor parameter must be grater then 0 and lower then 1");
+        }
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(context, videoUri);
+
+        List<DetectionResult> finalResults = new ArrayList<>();
+        for (long i = 0; i < duration; i = i + (int) (1 / factor) * 1000L) {
+            try {
+                Bitmap bitmap = retriever.getFrameAtTime(i,
+                        MediaMetadataRetriever.OPTION_CLOSEST).copy(Bitmap.Config.ARGB_8888, true);
+                if (bitmap != null) {
+                    finalResults.addAll(runObjectDetection(bitmap));
+                }
+            } catch (Exception e) {
+                Log.d(TAG, e.getMessage());
+            }
+        }
+
+        retriever.release();
+
+        // removing duplicates
+        return new HashSet<>(finalResults);
+    }
+
+    /**
+     * @param imagePath      image file absolute path
      * @param inputImageView imageview for the retrieving width and height
      * @return scaled and rotated bitmap
      */
@@ -209,19 +386,16 @@ public class StingleImageRecognition {
     }
 
     /**
-     *
      * @param imagePath image file absolute path
-     * @param width  to apply bitmap options for specified width
-     * @param height to apply bitmap options for specified height
+     * @param width     to apply bitmap options for specified width
+     * @param height    to apply bitmap options for specified height
      * @return scaled and rotated bitmap
      */
     public Bitmap prepareBitmap(String imagePath, int width, int height) {
-       return scaleAndRotateBitmap(imagePath, width, height);
+        return scaleAndRotateBitmap(imagePath, width, height);
     }
 
-
     /**
-     *
      * @param imagePath image file absolute path
      * @return scaled and rotated bitmap with best practice sizes by TF
      */
@@ -341,7 +515,7 @@ public class StingleImageRecognition {
         );
     }
 
-    public static class DetectionResult {
+    public static class DetectionResult implements Comparable<StingleImageRecognition.DetectionResult> {
         private final String label;
         private final float score;
 
@@ -356,6 +530,27 @@ public class StingleImageRecognition {
 
         public float getScore() {
             return score;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            DetectionResult that = (DetectionResult) o;
+            return label.equals(that.label);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(label);
+        }
+
+        @Override
+        public int compareTo(DetectionResult other) {
+            if (other.label.equals(this.label)) {
+                return 0;
+            }
+            return this.label.compareTo(other.label);
         }
     }
 

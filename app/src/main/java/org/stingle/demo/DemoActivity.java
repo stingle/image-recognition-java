@@ -118,6 +118,10 @@ public class DemoActivity extends AppCompatActivity implements View.OnClickListe
                 setViewAndDetect(getSampleImage(R.drawable.img_three));
                 break;
             }
+            case R.id.video: {
+                startActivity(new Intent(DemoActivity.this, VideoActivity.class));
+                break;
+            }
         }
     }
 
@@ -127,6 +131,7 @@ public class DemoActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.imgSampleThree).setOnClickListener(this);
         findViewById(R.id.captureImageFab).setOnClickListener(this);
         findViewById(R.id.chooseImageFab).setOnClickListener(this);
+        findViewById(R.id.video).setOnClickListener(this);
 
         inputImageView = findViewById(R.id.imageView);
         tvPlaceholder = findViewById(R.id.tvPlaceholder);
