@@ -3,6 +3,7 @@ package org.stingle.imagerecognition;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.*;
+import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 
@@ -10,12 +11,23 @@ import android.media.ExifInterface;
 import android.util.Log;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.gifdecoder.StandardGifDecoder;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
+
 import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.label.Category;
 import org.tensorflow.lite.task.vision.detector.Detection;
 import org.tensorflow.lite.task.vision.detector.ObjectDetector;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -157,7 +169,7 @@ public class StingleImageRecognition {
         if (BuildConfig.DEBUG) {
             debugPrint(results);
         }
-        listener.onDetected(finalResults);
+        listener.onDetected(new HashSet<>(finalResults));
     }
 
     /**
@@ -373,6 +385,72 @@ public class StingleImageRecognition {
     }
 
     /**
+     * Runs gif detection on the passed file uri and returns the detected objects result with result callback.
+     *
+     * @param factor   the factor of gif frames to be processed (when passed to 1.0f -> all frames will be processed,
+     *                 when passed to 0.5 -> the each second frame will be skipped, etc..). It's useful when the gif size is huge
+     * @param gifPath  file media uri to detect objects from
+     * @param callback detection results callback
+     */
+    public void runGifObjectDetection(Uri gifPath, float factor, OnDetectionResultsListener callback) throws Exception {
+        if (factor <= 0 || factor > 1.0f) {
+            throw new Exception("factor parameter must be grater then 0 and lower then 1");
+        }
+        Glide.with(context)
+                .asGif()
+                .load(gifPath)
+                .into(new CustomTarget<GifDrawable>() {
+
+                    @Override
+                    public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                        super.onLoadFailed(errorDrawable);
+                        callback.onDetected(null);
+                    }
+
+                    @Override
+                    public void onResourceReady(@NonNull GifDrawable resource, @Nullable Transition<? super GifDrawable> transition) {
+                        try {
+                            Object GifState = resource.getConstantState();
+                            Field frameLoader = GifState.getClass().getDeclaredField("frameLoader");
+                            frameLoader.setAccessible(true);
+                            Object gifFrameLoader = frameLoader.get(GifState);
+
+                            Field gifDecoder = gifFrameLoader.getClass().getDeclaredField("gifDecoder");
+                            gifDecoder.setAccessible(true);
+                            ArrayList<Bitmap> bitmaps = new ArrayList<>();
+                            StandardGifDecoder standardGifDecoder = (StandardGifDecoder) gifDecoder.get(gifFrameLoader);
+                            int framesCount = standardGifDecoder.getFrameCount();
+                            for (int i = 0; i < framesCount; i++) {
+                                standardGifDecoder.advance();
+                                bitmaps.add(standardGifDecoder.getNextFrame());
+                            }
+                            List<DetectionResult> results = new ArrayList<>();
+                            int step = 1;
+                            if (bitmaps.size() > 5) {
+                                step = (int) (1 / factor);
+                            }
+                            for (int i = 0; i < bitmaps.size(); i = i + step) {
+                                try {
+                                    results.addAll(runObjectDetection(bitmaps.get(i)));
+                                } catch (Exception e) {
+                                    Log.d(TAG, e.getMessage());
+                                }
+                            }
+                            callback.onDetected(new HashSet<>(results));
+                        } catch (Exception ex) {
+                            Log.d(TAG, ex.getMessage());
+                            callback.onDetected(null);
+                        }
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                        callback.onDetected(null);
+                    }
+                });
+    }
+
+    /**
      * @param imagePath      image file absolute path
      * @param inputImageView imageview for the retrieving width and height
      * @return scaled and rotated bitmap
@@ -566,6 +644,6 @@ public class StingleImageRecognition {
     }
 
     public interface OnDetectionResultsListener {
-        void onDetected(List<DetectionResult> results);
+        void onDetected(Set<DetectionResult> results);
     }
 }
