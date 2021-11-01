@@ -1,6 +1,6 @@
-**Stingle Object Recognition**
+**Stingle Face Recognition**
 
-*Library for detecting objects from the image and video using TensorFlow open source library*
+*A library for recognising similar faces from supplied images using TensorFlow open source library*
 
 ![](https://avatars.githubusercontent.com/u/69607920?s=200&v=4)
 
@@ -31,75 +31,19 @@ After adding the dependency you will find the module dependency in your app leve
 **How do I use?**
 
 Find or train the best TFLite model file for you and add into your app under assets folder.
-[there are several already trained models to use](https://tfhub.dev/tensorflow/collections/lite/task-library/object-detector/1)
+[there are several already trained models to use](https://tfhub.dev/s?module-type=image-feature-vector)
 
 You can execute this code to get an object recognition instance.
 
 ```java
- StingleImageRecognition imageDetector = new StingleImageRecognition.Builder(this)
-                .maxResults(5)
-                .modelPath("model.tflite")
-                .scoreThreshold(0.5f)
-                .build();
- 
- // runnning object detection on any bitmap and get the results list.
- try {
-        List<StingleImageRecognition.DetectionResult> results =
-                imageDetector.runObjectDetection(bitmap);
-        Log.d(TAG, results.toString());
-} catch (Exception e) {
-        Log.d(TAG, e.getMessage());
-}
-
-// runnning object detection on any bitmap and draw the results on the imageview.
-try {
-        List<StingleImageRecognition.DetectionResult> results =
-                imageDetector.runObjectDetection(bitmap, imageView);
-        Log.d(TAG, results.toString());
-} catch (Exception e) {
-        Log.d(TAG, e.getMessage());
-}
-
-// preparing bitmap before passing to image detection library:
-Bitmap rotatedBitmap = imageDetector.prepareBitmap(currentPhotoPath); // using best practice sizes by TFLite library
-or
-Bitmap rotatedBitmap = imageDetector.prepareBitmap(currentPhotoPath, 300, 400); // width and height specification
-or
-Bitmap rotatedBitmap = imageDetector.prepareBitmap(currentPhotoPath, inputImageView); // retrieving sizes from passed imageview
-```
-
-Runing object detection on the video file:
-
-```java
-// getting detected objects from the video file located on the raw folder.
-try {
-        Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.sample_1);
-        Set<StingleImageRecognition.DetectionResult> results =
-                      imageDetector.runVideoObjectDetection(videoUri, 20_000L, 2_000L);
-} catch (Exception e) {
-        Log.d(TAG, e.getMessage());
-}
-
-// getting detected objects from the specific video file path or media uri.
-try {
-        Set<StingleImageRecognition.DetectionResult> results =
-                      imageDetector.runVideoObjectDetection(videoFilePath, 10_000L, 1_000L);
-} catch (Exception e) {
-        Log.d(TAG, e.getMessage());
-}
-
-// getting detected objects from the specific video file path or media uri with the factor of skipping video frames.
-try {
-        Set<StingleImageRecognition.DetectionResult> results =
-                      imageDetector.runVideoObjectDetection(videoFilePath, 10_000L, 0.5f);
-} catch (Exception e) {
-        Log.d(TAG, e.getMessage());
-}
-
+    FaceRecogniser faceRecogniser = new FaceRecogniser();
+    faceRecogniser.init(context, "<path_to_your_model_in_assets>");
+    Result result = faceRecogniser.recognize(bitmap, Collections.emptySet()).get();
+    
 ```
 
 
-***An important point: try to always run the object detection functionns on the background thread to not to block the main/UI thread.***
+***An important point: try to always run the object detection functions on the background thread to not to block the main/UI thread.***
 
 **Compatibility**
 

@@ -13,15 +13,13 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
+        android:name=".DemoApplication"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Imagerecognitionjava">
         <activity
-            android:name=".VideoActivity"
-            android:exported="true" />
-        <activity
-            android:name=".DemoActivity"
+            android:name=".facerecognition.activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,15 +28,8 @@
             </intent-filter>
         </activity>
 
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="org.stingle.demo.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
+        <activity android:name=".facerecognition.activities.ClusteringActivity" />
+        <activity android:name=".facerecognition.activities.FindPersonActivity" />
     </application>
 
 </manifest>
