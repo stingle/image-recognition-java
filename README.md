@@ -97,7 +97,18 @@ try {
 }
 
 ```
-
+Runing object detection on the gif file:
+```java
+// getting detected objects from the specific gif file with the factor of skipping gif frames.
+try {
+        Uri gifUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.gif_sample_1);
+        imageDetector.runGifObjectDetection(gifUri, 0.5f, results -> {
+            Log.d(TAG, results);
+        });
+} catch (Exception e) {
+        Log.d(TAG, e.getMessage());
+}
+```
 
 ***An important point: try to always run the object detection functionns on the background thread to not to block the main/UI thread.***
 
