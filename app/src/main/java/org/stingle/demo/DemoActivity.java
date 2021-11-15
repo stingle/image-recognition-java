@@ -24,7 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.stingle.imagerecognition.StingleImageRecognition;
+import org.stingle.ai.image.StingleImageRecognition;
 
 import java.io.File;
 import java.io.IOException;
@@ -122,6 +122,10 @@ public class DemoActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(DemoActivity.this, VideoActivity.class));
                 break;
             }
+            case R.id.gif: {
+                startActivity(new Intent(DemoActivity.this, GifActivity.class));
+                break;
+            }
         }
     }
 
@@ -132,6 +136,7 @@ public class DemoActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.captureImageFab).setOnClickListener(this);
         findViewById(R.id.chooseImageFab).setOnClickListener(this);
         findViewById(R.id.video).setOnClickListener(this);
+        findViewById(R.id.gif).setOnClickListener(this);
 
         inputImageView = findViewById(R.id.imageView);
         tvPlaceholder = findViewById(R.id.tvPlaceholder);

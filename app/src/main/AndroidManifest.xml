@@ -18,8 +18,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Imagerecognitionjava">
+
         <activity
-            android:name=".facerecognition.activities.MainActivity"
+            android:name=".DemoActivity"
+            android:exported="true" />
+
+        <activity
+            android:name=".GifActivity"
+            android:exported="true" />
+        <activity
+            android:name=".VideoActivity"
+            android:exported="true" />
+        <activity
+            android:name=".FaceRecognitionActivity1"
+            android:exported="true" />
+
+        <activity
+            android:name=".FaceRecognitionActivity2"
+            android:exported="true" />
+        <activity
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,8 +46,15 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".facerecognition.activities.ClusteringActivity" />
-        <activity android:name=".facerecognition.activities.FindPersonActivity" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="org.stingle.demo.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

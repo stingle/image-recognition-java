@@ -77,7 +77,7 @@
             android:src="@drawable/img_three" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/buttonsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -87,39 +87,45 @@
 
         <Button
             android:id="@+id/captureImageFab"
-            android:layout_width="wrap_content"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="16dp"
             android:drawableStart="@drawable/ic_camera"
             android:text="@string/tv_take_photo"
             android:textAllCaps="false" />
 
         <Button
             android:id="@+id/chooseImageFab"
-            android:layout_width="wrap_content"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/captureImageFab"
             android:drawableStart="@drawable/ic_gallery"
             android:text="@string/tv_choose_photo"
             android:textAllCaps="false" />
 
         <Button
             android:id="@+id/video"
-            android:layout_width="wrap_content"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_below="@id/captureImageFab"
             android:drawableStart="@drawable/ic_gallery"
             android:text="@string/tv_video"
             android:textAllCaps="false" />
-    </LinearLayout>
+
+        <Button
+            android:id="@+id/gif"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_toEndOf="@id/video"
+            android:layout_below="@id/captureImageFab"
+            android:drawableStart="@drawable/ic_gallery"
+            android:text="@string/tv_gif"
+            android:textAllCaps="false" />
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -4,4 +4,5 @@
     <string name="tv_choose_photo">Choose photo</string>
     <string name="tv_video">Video</string>
     <string name="tv_description">Select a preset image or take a new photo</string>
+    <string name="tv_gif">GIF</string>
 </resources>

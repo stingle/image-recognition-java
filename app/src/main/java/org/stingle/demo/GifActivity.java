@@ -11,22 +11,24 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
+
+import com.bumptech.glide.Glide;
 
 import org.stingle.ai.image.StingleImageRecognition;
 
-import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class VideoActivity extends AppCompatActivity implements View.OnClickListener {
+public class GifActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private StingleImageRecognition videoDetector;
+    private StingleImageRecognition gifDetector;
     private TextView resultsView;
-    private VideoView videoView;
+    private ImageView gifImageView;
     private ProgressDialog progressDialog;
-    private @RawRes int selectedVideoId = R.raw.sample_1;
+    private @RawRes
+    int selectedGifId = R.raw.sample_1;
 
     private final Executor backgroundExecutor = Executors.newSingleThreadScheduledExecutor();
     private final Executor mainExecutor = new Handler(Looper.getMainLooper())::post;
@@ -34,10 +36,10 @@ public class VideoActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video);
+        setContentView(R.layout.activity_giif);
 
         setupViews();
-        setupVideoDetector();
+        setupGifDetector();
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -45,38 +47,30 @@ public class VideoActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.runBtn: {
-                runVideoDetectionAndShowResults();
+                runGifDetectionAndShowResults();
                 break;
             }
             case R.id.sample1: {
-                playVideo(R.raw.sample_1, R.id.sample1);
+                loadGif(R.raw.gif_sample_1, R.id.sample1);
                 break;
             }
             case R.id.sample2: {
-                playVideo(R.raw.sample_2,  R.id.sample2);
+                loadGif(R.raw.gif_sample_2, R.id.sample2);
                 break;
             }
             case R.id.sample3: {
-                playVideo(R.raw.sample_3,  R.id.sample3);
+                loadGif(R.raw.gif_sample_3, R.id.sample3);
                 break;
             }
             case R.id.sample4: {
-                playVideo(R.raw.sample_4,  R.id.sample4);
+                loadGif(R.raw.gif_sample_4, R.id.sample4);
                 break;
             }
             case R.id.sample5: {
-                playVideo(R.raw.sample_5,  R.id.sample5);
+                loadGif(R.raw.gif_sample_5, R.id.sample5);
                 break;
             }
         }
-    }
-
-    private void setupVideoDetector() {
-        videoDetector = new StingleImageRecognition.Builder(this)
-                .maxResults(5)
-                .modelPath("model.tflite")
-                .scoreThreshold(0.3f)
-                .build();
     }
 
     private void setupViews() {
@@ -90,20 +84,35 @@ public class VideoActivity extends AppCompatActivity implements View.OnClickList
 
         resultsView = findViewById(R.id.results);
 
-        videoView = findViewById(R.id.videoView);
-        playVideo(R.raw.sample_1, R.id.sample1); // playing sample1 by default
+        gifImageView = findViewById(R.id.gifView);
+        loadGif(R.raw.gif_sample_1, R.id.sample1); // playing sample1 by default
 
         setupProgressDialog();
     }
 
+    private void setupGifDetector() {
+        gifDetector = new StingleImageRecognition.Builder(this)
+                .maxResults(5)
+                .modelPath("model.tflite")
+                .scoreThreshold(0.3f)
+                .build();
+    }
+
+    private void setupProgressDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("please wait");
+        progressDialog.setMessage("gif processing....");
+        progressDialog.setCancelable(false);
+    }
+
     @SuppressLint("ResourceAsColor")
-    private void playVideo(@RawRes int videoId, @IdRes int textViewId) {
-        videoView.stopPlayback();
-        videoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + videoId));
-        videoView.start();
-        selectedVideoId = videoId;
+    private void loadGif(@RawRes int gifId, @IdRes int textViewId) {
+        Glide.with(this).asGif().load(gifId).into(gifImageView);
+
+        selectedGifId = gifId;
 
         resetTextColors();
+        resultsView.setText("");
         TextView selected = findViewById(textViewId);
         selected.setTextColor(R.color.purple_500);
     }
@@ -126,29 +135,21 @@ public class VideoActivity extends AppCompatActivity implements View.OnClickList
         t5.setTextColor(R.color.black);
     }
 
-    private void setupProgressDialog() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("please wait");
-        progressDialog.setMessage("video processing....");
-        progressDialog.setCancelable(false);
-    }
-
-    private void runVideoDetectionAndShowResults() {
+    private void runGifDetectionAndShowResults() {
         progressDialog.show();
         backgroundExecutor.execute(() -> {
             try {
-                Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + selectedVideoId);
-                Set<StingleImageRecognition.DetectionResult> results =
-                        videoDetector.runVideoObjectDetection(videoUri, 20_000L, 2_000L);
-
-                StringBuilder sb = new StringBuilder();
-                for (StingleImageRecognition.DetectionResult el : results) {
-                    sb.append(el.getLabel());
-                    sb.append(", ");
-                }
-                mainExecutor.execute(() -> {
-                    progressDialog.dismiss();
-                    resultsView.setText(sb.toString());
+                Uri gifUri = Uri.parse("android.resource://" + getPackageName() + "/" + selectedGifId);
+                gifDetector.runGifObjectDetection(gifUri, 0.5f, results -> {
+                    StringBuilder sb = new StringBuilder();
+                    for (StingleImageRecognition.DetectionResult el : results) {
+                        sb.append(el.getLabel());
+                        sb.append(", ");
+                    }
+                    mainExecutor.execute(() -> {
+                        progressDialog.dismiss();
+                        resultsView.setText(sb.toString());
+                    });
                 });
 
             } catch (Exception e) {

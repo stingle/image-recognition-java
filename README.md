@@ -36,12 +36,44 @@ Find or train the best TFLite model file for you and add into your app under ass
 You can execute this code to get an object recognition instance.
 
 ```java
-    FaceRecogniser faceRecogniser = new FaceRecogniser();
-    faceRecogniser.init(context, "<path_to_your_model_in_assets>");
-    Result result = faceRecogniser.recognize(bitmap, Collections.emptySet()).get();
-    
-```
+// getting detected objects from the video file located on the raw folder.
+try {
+        Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.sample_1);
+        Set<StingleImageRecognition.DetectionResult> results =
+                      imageDetector.runVideoObjectDetection(videoUri, 20_000L, 2_000L);
+} catch (Exception e) {
+        Log.d(TAG, e.getMessage());
+}
 
+// getting detected objects from the specific video file path or media uri.
+try {
+        Set<StingleImageRecognition.DetectionResult> results =
+                      imageDetector.runVideoObjectDetection(videoFilePath, 10_000L, 1_000L);
+} catch (Exception e) {
+        Log.d(TAG, e.getMessage());
+}
+
+// getting detected objects from the specific video file path or media uri with the factor of skipping video frames.
+try {
+        Set<StingleImageRecognition.DetectionResult> results =
+                      imageDetector.runVideoObjectDetection(videoFilePath, 10_000L, 0.5f);
+} catch (Exception e) {
+        Log.d(TAG, e.getMessage());
+}
+
+```
+Runing object detection on the gif file:
+```java
+// getting detected objects from the specific gif file with the factor of skipping gif frames.
+try {
+        Uri gifUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.gif_sample_1);
+        imageDetector.runGifObjectDetection(gifUri, 0.5f, results -> {
+            Log.d(TAG, results);
+        });
+} catch (Exception e) {
+        Log.d(TAG, e.getMessage());
+}
+```
 
 ***An important point: try to always run the object detection functions on the background thread to not to block the main/UI thread.***
 
