@@ -75,7 +75,7 @@ Runing object detection on the video file:
 try {
         Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.sample_1);
         Set<StingleImageRecognition.DetectionResult> results =
-                      imageDetector.runVideoObjectDetection(videoUri, 20_000L, 2_000L);
+                      imageDetector.runVideoObjectDetection(videoUri, 2_000L);
 } catch (Exception e) {
         Log.d(TAG, e.getMessage());
 }
@@ -83,7 +83,7 @@ try {
 // getting detected objects from the specific video file path or media uri.
 try {
         Set<StingleImageRecognition.DetectionResult> results =
-                      imageDetector.runVideoObjectDetection(videoFilePath, 10_000L, 1_000L);
+                      imageDetector.runVideoObjectDetection(videoFilePath, 1_000L);
 } catch (Exception e) {
         Log.d(TAG, e.getMessage());
 }
@@ -91,7 +91,7 @@ try {
 // getting detected objects from the specific video file path or media uri with the factor of skipping video frames.
 try {
         Set<StingleImageRecognition.DetectionResult> results =
-                      imageDetector.runVideoObjectDetection(videoFilePath, 10_000L, 0.5f);
+                      imageDetector.runVideoObjectDetection(videoFilePath, 0.5f);
 } catch (Exception e) {
         Log.d(TAG, e.getMessage());
 }
