@@ -139,7 +139,7 @@ public class VideoActivity extends AppCompatActivity implements View.OnClickList
             try {
                 Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + selectedVideoId);
                 Set<StingleImageRecognition.DetectionResult> results =
-                        videoDetector.runVideoObjectDetection(videoUri, 20_000L, 2_000L);
+                        videoDetector.runVideoObjectDetection(videoUri, 2_000L);
 
                 StringBuilder sb = new StringBuilder();
                 for (StingleImageRecognition.DetectionResult el : results) {

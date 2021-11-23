@@ -258,7 +258,6 @@ public class StingleImageRecognition {
      * Runs video detection on passed video file absolute path and returns the detected objects UNIQUE list
      *
      * @param videoPath      any video file absolute path
-     * @param duration       the original video duration in millis
      * @param skipFrameDelay skip frames delay in millis (example: when skipFrameDelay is passed 5_000L,
      *                       then the video corresponding frames should be processed by video detector:
      *                       0, 5000, 10000, etc... until duration).
@@ -267,16 +266,18 @@ public class StingleImageRecognition {
      * @throws Exception when passed video file is corrupted, not found, permission denied or media retriever can't open it
      */
     public Set<DetectionResult> runVideoObjectDetection(String videoPath,
-                                                        long duration,
                                                         long skipFrameDelay) throws Exception {
         if (detector == null) {
             throw new IOException("failed to access TF model file");
         }
+
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(videoPath);
+
+        long duration = getVideoDuration(retriever);
         if (skipFrameDelay >= duration) {
             throw new Exception("skip delay need to be lower number than duration.");
         }
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        retriever.setDataSource(videoPath);
 
         List<DetectionResult> finalResults = new ArrayList<>();
         for (long i = 0; i < duration; i = i + skipFrameDelay) {
@@ -301,7 +302,6 @@ public class StingleImageRecognition {
      * Runs video detection on passed video file uri and returns the detected objects UNIQUE list
      *
      * @param videoUri       any video file absolute path
-     * @param duration       the original video duration in millis
      * @param skipFrameDelay skip frames delay in millis (example: when skipFrameDelay is passed 5_000L,
      *                       then the video corresponding frames should be processed by video detector:
      *                       0, 5000, 10000, etc... until duration).
@@ -310,16 +310,18 @@ public class StingleImageRecognition {
      * @throws Exception when passed video file uri is corrupted, not found, permission denied or media retriever can't open it
      */
     public Set<DetectionResult> runVideoObjectDetection(Uri videoUri,
-                                                        long duration,
                                                         long skipFrameDelay) throws Exception {
         if (detector == null) {
             throw new IOException("failed to access TF model file");
         }
+
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(context, videoUri);
+
+        long duration = getVideoDuration(retriever);
         if (skipFrameDelay >= duration) {
             throw new Exception("skip delay need to be lower number than duration.");
         }
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        retriever.setDataSource(context, videoUri);
 
         List<DetectionResult> finalResults = new ArrayList<>();
         for (long i = 0; i < duration; i = i + skipFrameDelay) {
@@ -344,7 +346,6 @@ public class StingleImageRecognition {
      * Runs video detection on passed video file uri and returns the detected objects UNIQUE list
      *
      * @param videoUri any video file absolute path
-     * @param duration the original video duration in millis
      * @param factor   the factor of video duration to be processed (example: when video duration
      *                 is 10 seconds and factor passed to 0.5f then the 5 seconds of the full 10
      *                 seconds video will be processed (frames in the whole video)
@@ -353,7 +354,6 @@ public class StingleImageRecognition {
      * @throws Exception when passed video file uri is corrupted, not found, permission denied or media retriever can't open it
      */
     public Set<DetectionResult> runVideoObjectDetection(Uri videoUri,
-                                                        long duration,
                                                         float factor) throws Exception {
         if (detector == null) {
             throw new IOException("failed to access TF model file");
@@ -363,6 +363,11 @@ public class StingleImageRecognition {
         }
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(context, videoUri);
+
+        long duration = getVideoDuration(retriever);
+        if (duration == 0) {
+            throw new Exception("failed to retrieve duration from video");
+        }
 
         List<DetectionResult> finalResults = new ArrayList<>();
         for (long i = 0; i < duration; i = i + (int) (1 / factor) * 1000L) {
@@ -590,6 +595,19 @@ public class StingleImageRecognition {
                 source, 0, 0, source.getWidth(), source.getHeight(),
                 matrix, true
         );
+    }
+
+    private long getVideoDuration(MediaMetadataRetriever retriever) {
+        long duration;
+        try {
+            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            duration = Long.parseLong(time);
+
+        } catch (RuntimeException e){
+            duration = 0;
+        }
+
+        return duration;
     }
 
     public static class DetectionResult implements Comparable<StingleImageRecognition.DetectionResult> {
