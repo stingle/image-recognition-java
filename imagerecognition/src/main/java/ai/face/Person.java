@@ -1,4 +1,4 @@
-package org.stingle.ai.face;
+package ai.face;
 
 import java.util.UUID;
 

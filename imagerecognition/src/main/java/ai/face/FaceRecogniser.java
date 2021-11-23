@@ -1,4 +1,4 @@
-package org.stingle.ai.face;
+package ai.face;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -109,9 +109,9 @@ public class FaceRecogniser {
 	}
 
 	/**
-	 * Asynchronously finds any face in the provided image, identifies it comparing to existing faces and returns a future holding the result.
+	 * Asynchronously finds any face in the provided org.stingle.ai.image, identifies it comparing to existing faces and returns a future holding the result.
 	 *
-	 * @param image The image to detect faces in
+	 * @param image The org.stingle.ai.image to detect faces in
 	 * @param previousIdentifiedFaces The collection of previously identified faces
 	 *
 	 * @return A future of Results.

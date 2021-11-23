@@ -15,7 +15,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import org.stingle.ai.face.Callback;
+import ai.face.Callback;
 import org.stingle.demo.data.MockDatabase;
 
 import java.util.Map;

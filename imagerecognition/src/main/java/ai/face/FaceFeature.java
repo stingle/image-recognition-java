@@ -1,4 +1,4 @@
-package org.stingle.ai.face;
+package ai.face;
 
 /**
  * A class holding an arbitrary sized embedding vector of a single human face.

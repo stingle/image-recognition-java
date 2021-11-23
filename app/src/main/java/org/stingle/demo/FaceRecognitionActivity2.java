@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.stingle.ai.face.FaceRecogniser;
+import ai.face.FaceRecogniser;
 import org.stingle.demo.data.Image;
 import org.stingle.demo.data.MockDatabase;
 import org.stingle.demo.util.AndroidUtils;

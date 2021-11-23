@@ -48,7 +48,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="org.stingle.demo.fileprovider"
+            android:authorities="org.org.stingle.ai.image.demo.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

@@ -3,7 +3,7 @@ package org.stingle.demo.data;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import org.stingle.ai.face.Person;
+import ai.face.Person;
 import org.stingle.demo.util.AndroidUtils;
 
 import java.util.List;

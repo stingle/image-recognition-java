@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import org.stingle.ai.face.FaceRecogniser;
+import ai.face.FaceRecogniser;
 import org.stingle.demo.adapters.ImageListAdapter;
 import org.stingle.demo.adapters.PersonListAdapter;
 import org.stingle.demo.data.Image;

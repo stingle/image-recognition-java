@@ -1,7 +1,7 @@
 package org.stingle.demo.data;
 
 
-import org.stingle.ai.face.Person;
+import ai.face.Person;
 
 import java.util.ArrayList;
 import java.util.Collection;

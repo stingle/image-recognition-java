@@ -1,6 +1,8 @@
-package org.stingle.ai.face;
+package ai.face;
 
-public class MathUtils {
+import java.lang.annotation.Target;
+
+class MathUtils {
 	/**
 	 * @return The similarity coefficient between two equal size vectors.
 	 * Returned value is within [0..1] range. Values closer to 0 means better similarity.

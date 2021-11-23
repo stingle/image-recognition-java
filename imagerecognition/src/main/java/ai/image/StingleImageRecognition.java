@@ -1,4 +1,4 @@
-package org.stingle.ai.image;
+package ai.image;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
@@ -20,6 +20,7 @@ import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 
+import org.stingle.ai.BuildConfig;
 import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.label.Category;
 import org.tensorflow.lite.task.vision.detector.Detection;
@@ -38,7 +39,7 @@ public class StingleImageRecognition {
     private static final String TAG = "Stingle - ODT";
     private static final float MAX_FONT_SIZE = 96F;
 
-    // best practice sizes for tesnorflow image classification
+    // best practice sizes for tesnorflow org.stingle.ai.image classification
     public static final int IMG_SIZE_WIDTH = 256;
     public static final int IMG_SIZE_HEIGHT = 256;
 
@@ -122,7 +123,7 @@ public class StingleImageRecognition {
     /**
      * Runs object detection on bitmap and returns detected objects list
      *
-     * @param bitmap bitmap image to run object detection on
+     * @param bitmap bitmap org.stingle.ai.image to run object detection on
      * @return detected objects list
      * @throws IOException when accessing corrupted or TF model file or not finding the model file path
      */
@@ -148,7 +149,7 @@ public class StingleImageRecognition {
     /**
      * Runs object detection on bitmap and returns detected objects list
      *
-     * @param bitmap   bitmap image to run object detection on
+     * @param bitmap   bitmap org.stingle.ai.image to run object detection on
      * @param listener callback with detected results
      * @throws IOException when accessing corrupted or TF model file or not finding the model file path
      */
@@ -172,9 +173,9 @@ public class StingleImageRecognition {
     }
 
     /**
-     * Runs object detection on bitmap and draw the output on provided image view
+     * Runs object detection on bitmap and draw the output on provided org.stingle.ai.image view
      *
-     * @param bitmap         bitmap image to run object detection on
+     * @param bitmap         bitmap org.stingle.ai.image to run object detection on
      * @param inputImageView imageview reference to draw detected objects bounding boxes into it
      * @return detected objects list
      * @throws IOException when accessing corrupted or TF model file or not finding the model file path
@@ -185,7 +186,7 @@ public class StingleImageRecognition {
         if (detector == null) {
             throw new IOException("failed to access TF model file");
         }
-        // Step 3: Feed given image to the detector
+        // Step 3: Feed given org.stingle.ai.image to the detector
         List<Detection> results = detector.detect(image);
 
         // Step 4: Parse the detection result and show it
@@ -455,7 +456,7 @@ public class StingleImageRecognition {
     }
 
     /**
-     * @param imagePath      image file absolute path
+     * @param imagePath      org.stingle.ai.image file absolute path
      * @param inputImageView imageview for the retrieving width and height
      * @return scaled and rotated bitmap
      */
@@ -468,7 +469,7 @@ public class StingleImageRecognition {
     }
 
     /**
-     * @param imagePath image file absolute path
+     * @param imagePath org.stingle.ai.image file absolute path
      * @param width     to apply bitmap options for specified width
      * @param height    to apply bitmap options for specified height
      * @return scaled and rotated bitmap
@@ -478,7 +479,7 @@ public class StingleImageRecognition {
     }
 
     /**
-     * @param imagePath image file absolute path
+     * @param imagePath org.stingle.ai.image file absolute path
      * @return scaled and rotated bitmap with best practice sizes by TF
      */
     public Bitmap prepareBitmap(String imagePath) {
@@ -552,10 +553,10 @@ public class StingleImageRecognition {
         int photoW = bmOptions.outWidth;
         int photoH = bmOptions.outHeight;
 
-        // Determine how much to scale down the image
+        // Determine how much to scale down the org.stingle.ai.image
         int scaleFactor = Math.max(1, Math.min(photoW / width, photoH / height));
 
-        // Decode the image file into a Bitmap sized to fill the View
+        // Decode the org.stingle.ai.image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;
         bmOptions.inMutable = true;
