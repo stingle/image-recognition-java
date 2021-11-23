@@ -1,7 +1,5 @@
 package ai.face;
 
-import java.lang.annotation.Target;
-
 class MathUtils {
 	/**
 	 * @return The similarity coefficient between two equal size vectors.
