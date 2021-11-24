@@ -134,8 +134,8 @@ Minimum Android SDK: Stingle org.stingle.ai.image recognition requires a minimum
 
 **Also you can see**
 
-[Demo project](https://github.com/stingle/org.stingle.ai.image-recognition-java/tree/main/app) in github
+[Demo project](https://github.com/stingle/image-recognition-java/tree/main/app) in github
 
 **License**
 
-Apache 2.0. See the [LICENSE](https://github.com/stingle/org.stingle.ai.image-recognition-java/blob/main/LICENSE). file for details.
+Apache 2.0. See the [LICENSE](https://github.com/stingle/image-recognition-java/blob/main/LICENSE). file for details.
