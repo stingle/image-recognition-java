@@ -24,7 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.stingle.imagerecognition.StingleImageRecognition;
+import ai.image.StingleImageRecognition;
 
 import java.io.File;
 import java.io.IOException;
@@ -151,7 +151,7 @@ public class DemoActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setViewAndDetect(Bitmap bitmap) {
-        // Display capture image
+        // Display capture org.stingle.ai.image
         inputImageView.setImageBitmap(bitmap);
         tvPlaceholder.setVisibility(View.INVISIBLE);
 
@@ -196,12 +196,12 @@ public class DemoActivity extends AppCompatActivity implements View.OnClickListe
 
     private void dispatchGalleryPictureIntent() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-        photoPickerIntent.setType("image/*");
+        photoPickerIntent.setType("org/stingle/ai/image/*");
         galleryActivityResultLauncher.launch(photoPickerIntent);
     }
 
     private File createImageFile() throws IOException {
-        // Create an image file name
+        // Create an org.stingle.ai.image file name
         @SuppressLint("SimpleDateFormat")
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);

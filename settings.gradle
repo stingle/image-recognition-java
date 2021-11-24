@@ -17,6 +17,6 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
     }
 }
-rootProject.name = "image-recognition-java"
+rootProject.name = "org.stingle.ai.image-recognition-java"
 include ':app'
 include ':imagerecognition'

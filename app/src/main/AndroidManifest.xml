@@ -13,10 +13,16 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
+        android:name=".DemoApplication"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Imagerecognitionjava">
+
+        <activity
+            android:name=".DemoActivity"
+            android:exported="true" />
+
         <activity
             android:name=".GifActivity"
             android:exported="true" />
@@ -24,7 +30,14 @@
             android:name=".VideoActivity"
             android:exported="true" />
         <activity
-            android:name=".DemoActivity"
+            android:name=".FaceRecognitionActivity1"
+            android:exported="true" />
+
+        <activity
+            android:name=".FaceRecognitionActivity2"
+            android:exported="true" />
+        <activity
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,7 +48,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="org.stingle.demo.fileprovider"
+            android:authorities="org.org.stingle.ai.image.demo.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

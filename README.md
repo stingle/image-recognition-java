@@ -1,19 +1,19 @@
 **Stingle Object Recognition**
 
-*Library for detecting objects from the image and video using TensorFlow open source library*
+*Library for detecting objects and recognising faces from org.stingle.ai.image and video using TensorFlow open source library*
 
 ![](https://avatars.githubusercontent.com/u/69607920?s=200&v=4)
 
 **How to include?**
 
 ```
-git clone https://github.com/stingle/image-recognition-java.git
-cd image-recognition-java
+git clone https://github.com/stingle/org.stingle.ai.image-recognition-java.git
+cd org.stingle.ai.image-recognition-java
 ./gradlew build
 ```
 At first you need to find generated .aar file in the build outputs. The .aar file path is the following:
 ```
-image-recognition-java/imagerecognition/build/outputs/aar/stingle-imagerecognition-1.0.0.aar
+org.stingle.ai.image-recognition-java/imagerecognition/build/outputs/aar/stingle-imagerecognition-1.0.0.aar
 ```
 ***Add your .aar as a dependency using Android Studio.***
 
@@ -60,7 +60,7 @@ try {
         Log.d(TAG, e.getMessage());
 }
 
-// preparing bitmap before passing to image detection library:
+// preparing bitmap before passing to org.stingle.ai.image detection library:
 Bitmap rotatedBitmap = imageDetector.prepareBitmap(currentPhotoPath); // using best practice sizes by TFLite library
 or
 Bitmap rotatedBitmap = imageDetector.prepareBitmap(currentPhotoPath, 300, 400); // width and height specification
@@ -110,16 +110,32 @@ try {
 }
 ```
 
+For face detection
+
+```java
+FaceRecogniser faceRecogniser = new FaceRecogniser();
+faceRecogniser.init(context, "facenet.tflite");
+
+// As facerecognizer does not store any data, you need to supply it with previous results.
+// It accepts any collection.
+Set<Person> personData = ...
+
+FaceRecogniser.Result result = faceRecogniser.recognise(bitmap, personData).get();
+
+// Then store accordingly
+personData.addAll(result.personList);
+```
+
 ***An important point: try to always run the object detection functionns on the background thread to not to block the main/UI thread.***
 
 **Compatibility**
 
-Minimum Android SDK: Stingle image recognition requires a minimum API level of 23.
+Minimum Android SDK: Stingle org.stingle.ai.image recognition requires a minimum API level of 23.
 
 **Also you can see**
 
-[Demo project](https://github.com/stingle/image-recognition-java/tree/main/app) in github
+[Demo project](https://github.com/stingle/org.stingle.ai.image-recognition-java/tree/main/app) in github
 
 **License**
 
-Apache 2.0. See the [LICENSE](https://github.com/stingle/image-recognition-java/blob/main/LICENSE). file for details.
+Apache 2.0. See the [LICENSE](https://github.com/stingle/org.stingle.ai.image-recognition-java/blob/main/LICENSE). file for details.

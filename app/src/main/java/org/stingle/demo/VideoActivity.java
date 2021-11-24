@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.VideoView;
 
-import org.stingle.imagerecognition.StingleImageRecognition;
+import ai.image.StingleImageRecognition;
 
 import java.util.Set;
 import java.util.concurrent.Executor;

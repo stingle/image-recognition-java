@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import org.stingle.imagerecognition.StingleImageRecognition;
+import ai.image.StingleImageRecognition;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
